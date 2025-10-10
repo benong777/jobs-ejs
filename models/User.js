@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please provide a name'],
     minlength: 3,
-    maxLength: 50
+    maxlength: 50
   },
   email: {
     type: String,
@@ -25,18 +24,14 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre('save', async function() {
+UserSchema.pre('save', async function(next) {
+  //-- Prevents re-hashing on every save
+  if (!this.isModified('password')) return next();
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
-
-UserSchema.methods.createJWT = function () {
-  return jwt.sign(
-    { userId: this._id, name: this.name },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_LIFETIME }
-  );
-}
 
 UserSchema.methods.comparePassword = async function(userEnteredPassword) {
   const isMatch = await bcrypt.compare(userEnteredPassword, this.password);
