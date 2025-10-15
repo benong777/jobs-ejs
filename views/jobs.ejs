@@ -1,0 +1,52 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<a href="/">
+  <button>Go to Homepage</button>
+</a>
+
+<h2>Jobs List</h2>
+
+<% if (flashMessages.error) { %>
+  <% flashMessages.error.forEach((msg) => { %>
+    <div style="color:red"><%= msg %></div>
+  <% }) %>
+<% } %>
+<% if (flashMessages.info) { %>
+  <% flashMessages.info.forEach((msg) => { %>
+    <div style="color:green"><%= msg %></div>
+  <% }) %>
+<% } %>
+
+<table id="jobs-table">
+  <tr id="jobs-table-header">
+    <th>Company</th>
+    <th>Position</th>
+    <th>Status</th>
+    <th colspan="2"></th>
+  </tr>
+  <% if (jobs && jobs.length) { %>
+    <% jobs.forEach((job) => { %>
+      <tr>
+        <td><%= job.company %></td>
+        <td><%= job.position %></td>
+        <td><%= job.status %></td>
+        <td>
+          <a href="/jobs/edit/<%= job.id %>">
+            <button type="button">Edit</button>
+          </a>
+          <form method="POST" action="/jobs/delete/<%= job._id %>" style="display:inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  <% } %>
+</table>
+
+<a href="/jobs/new">
+  <button>Add New Job</button>
+</a>
+
+<%- include("partials/footer.ejs") %>

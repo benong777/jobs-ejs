@@ -23,6 +23,7 @@
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^5.0.0",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "eslint": "^9.36.0",
@@ -37,6 +38,7 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "prettier": "^3.6.2",
+    "rate-limiter": "^0.2.0",
     "xss-clean": "^0.1.4"
   }
 }

@@ -1,12 +1,22 @@
 const express = require("express");
 require("express-async-errors");
 
+//-- Extra security packages
+const helmet = require('helmet');
+const cors = require('cors');
+const xss = require('xss-clean');
+const rateLimiter = require('express-rate-limit');
+
 const app = express();
 
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
 
 require("dotenv").config(); // to load the .env file into the process.env object
+
+//-- Routers
+// const authRouter = require('./routes/auth');
+const jobsRouter = require('./routes/jobs');
 
 //-- Host-csrf middleware
 const cookieParser = require("cookie-parser")
@@ -47,6 +57,20 @@ if (app.get("env") === "production") {
   sessionParms.cookie.secure = true; // serve secure cookies
 }
 
+//-- Rate Limiter
+app.set('trust proxy', 1);      // rateLimiter - Enable if behind a reverse proxy (Heroku, Bluemax, AWS ELB, Nginx)
+app.use(rateLimiter({
+    windowMs: 15 * 60 * 1000,   // 15mins
+    max: 100,                   // limit each IP to 100 requests per windowMs
+  })
+);
+
+//-- Middleware
+// app.use(express.json());   // Needed?
+app.use(helmet());
+app.use(cors());
+app.use(xss());
+
 app.use(session(sessionParms));
 app.use(require("connect-flash")());  //-- Flash Messages
 
@@ -78,9 +102,9 @@ app.use((req, res, next) => {
 
 app.use(require("./middleware/storeLocals"));
 app.get("/", (req, res) => {
-  // res.render("index", { csrfToken: req.csrfToken() });
   res.render("index");
 });
+
 app.use("/sessions", require("./routes/sessionRoutes"));
 
 const secretWordRouter = require("./routes/secretWord");
@@ -88,6 +112,10 @@ app.use("/secretWord", secretWordRouter);
 
 const auth = require("./middleware/auth");
 app.use("/secretWord", auth, secretWordRouter);
+
+//-- Routes
+// app.use('/auth', authRouter);
+app.use('/jobs', auth, jobsRouter);
 
 app.use((req, res) => {
   res.status(404).send(`That page (${req.url}) was not found.`);
