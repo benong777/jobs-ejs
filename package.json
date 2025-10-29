@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test mocha tests/*.js --timeout 5000 --exit",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
@@ -40,5 +40,13 @@
     "prettier": "^3.6.2",
     "rate-limiter": "^0.2.0",
     "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "chai": "^6.2.0",
+    "chai-http": "^5.1.2",
+    "factory-bot": "^6.3.1",
+    "mocha": "^11.7.4",
+    "puppeteer": "^24.26.1"
   }
 }
