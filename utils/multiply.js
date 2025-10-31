@@ -1,9 +1,5 @@
-const multiply = require("../utils/multiply");
-const get_chai = require("../utils/get_chai");
+const multiply = (a,b) => {
+  return a * b;
+}
 
-describe("testing multiply", () => {
-  it("should give 7*6 is 42", async () => {
-    const { expect } = await get_chai();
-    expect(multiply(7, 6)).to.equal(42);
-  });
-});
+module.exports = multiply;

@@ -1,8 +1,10 @@
-// const Job = require("../models/Job")
+const { app } = require("../app");
+const Job = require("../models/Job")
 const { seed_db, testUserPassword } = require("../utils/seed_db");
 const get_chai = require("../utils/get_chai");
 
-before(async () => {
+describe("test crud operations", function () {
+  before(async () => {
     const { expect, request } = await get_chai();
     this.test_user = await seed_db();
     let req = request.execute(app).get("/session/logon").send();
@@ -11,7 +13,8 @@ before(async () => {
     this.csrfToken = /_csrf\" value=\"(.*?)\"/.exec(textNoLineEnd)[1];
     let cookies = res.headers["set-cookie"];
     this.csrfCookie = cookies.find((element) =>
-      element.startsWith("csrfToken"),
+      // element.startsWith("csrfToken"),
+      element.startsWith("__Host-csrfToken"),
     );
     const dataToPost = {
       email: this.test_user.email,
@@ -33,22 +36,11 @@ before(async () => {
     expect(this.csrfToken).to.not.be.undefined;
     expect(this.sessionCookie).to.not.be.undefined;
     expect(this.csrfCookie).to.not.be.undefined;
-  });
 
-describe("some test suite", function () {
-  before(async function () {
-    const { expect, request } = await get_chai();
-    this.test_user = await seed_db();
-    // logon code here...
+    const pageParts = res.text.split("<tr>")
+    expect(pageParts.length).to.equal(21)
 
-    this.res = await request.execute(app).get("/somepage").send();
-  });
-
-  it("should have 21 table rows and 21 jobs in DB", async function () {
-    const pageParts = this.res.text.split("<tr>");
-    expect(pageParts.length).to.equal(21);
-
-    const jobs = await Job.find({ createdBy: this.test_user._id });
-    expect(jobs.length).to.equal(21);
+    const jobs = await Job.find({createdBy: this.test_user._id})
+    expect(jobs.length).to.equal(21)
   });
 });

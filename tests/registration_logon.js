@@ -24,7 +24,8 @@ describe("tests for registration and logon", function () {
     expect(res.headers).to.have.property("set-cookie");
     const cookies = res.headers["set-cookie"];
     this.csrfCookie = cookies.find((element) =>
-      element.startsWith("csrfToken"),
+      // element.startsWith("_csrfToken"),
+      element.startsWith("__Host-csrfToken"),
     );
     expect(this.csrfCookie).to.not.be.undefined;
   });
