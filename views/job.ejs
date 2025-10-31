@@ -1,0 +1,32 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<h2><%= job ? "Edit Job" : "Add Job" %></h2>
+<% if (flashMessages.error) { %>
+  <% flashMessages.error.forEach((msg) => { %>
+    <div style="color:red"><%= msg %></div>
+  <% }) %>
+<% } %>
+<% if (flashMessages.info) { %>
+  <% flashMessages.info.forEach((msg) => { %>
+    <div style="color:green"><%= msg %></div>
+  <% }) %>
+<% } %>
+
+<form method="POST" action="<%= job ? '/jobs/update/' + job._id : '/jobs' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div>
+    <label for="company">Company:</label>
+    <input id="company" name="company" value="<%= job ? job.company : '' %>" required>
+  </div>
+  <div>
+    <label for="position">position:</label>
+    <input id="position" name="position" value="<%= job ? job.position : '' %>" required>
+  </div>
+  <div>
+    <button type="submit"><%= job ? "Update" : "Add Job" %></button>
+    <a href="/jobs"><button type="button">Cancel</button></a>
+  </div>
+</form>
+
+<%- include("partials/footer.ejs") %>
